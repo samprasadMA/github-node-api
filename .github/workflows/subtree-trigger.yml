@@ -1,0 +1,30 @@
+name: Trigger Subtree Sync
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-subtree-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: MFE PR Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: samprasadMA/monorepo-sandbox
+          event-type: PR Dispatch
+          client-payload: |-
+            {
+              "repo": {
+                "name": "${{ github.repository }}",
+                "branch": "${{ github.ref }}"
+              }
+            }
